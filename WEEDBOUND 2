@@ -1,0 +1,266 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(WeedBoundApp());
+}
+
+class WeedBoundApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'WeedBound',
+      theme: ThemeData(
+        primarySwatch: Colors.green,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+      ),
+      home: AgeVerificationScreen(),
+    );
+  }
+}
+
+// First Slide: Age Verification
+class AgeVerificationScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Are you over 19?',
+              style: TextStyle(color: Colors.white, fontSize: 24),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => RuleScreen()),
+                  ),
+                  child: Text('Yes'),
+                ),
+                SizedBox(width: 20),
+                ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('No'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Rule Screen
+class RuleScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: GestureDetector(
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => LocationRequestScreen()),
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                '#1 Rule: Have Fun',
+                style: TextStyle(fontSize: 24),
+              ),
+              Text('Tap anywhere to continue'),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// Location Request Screen
+class LocationRequestScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            // Request location permissions and get user's location here
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ProductScreen()),
+            );
+          },
+          child: Text('Allow Location'),
+        ),
+      ),
+    );
+  }
+}
+
+// Second Slide: Product Screen
+class ProductScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('WeedBound')),
+      body: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              DropdownButton<String>(
+                hint: Text("Select Product"),
+                items: <String>['Vaporizers', 'Edibles', 'Dried Flower']
+                    .map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (_) {},
+              ),
+              NumberInputField(label: "Grams"),
+              NumberInputField(label: "Max Price"),
+            ],
+          ),
+          Expanded(
+            child: ListView(
+              children: [
+                ProductItem(
+                    name: "Pink Lemonade AIO Disposable Vape",
+                    distance: "290m",
+                    price: "\$31.99",
+                    quantity: "0.5g"),
+                // Add more product items here
+              ],
+            ),
+          ),
+          BottomNavigation(),
+        ],
+      ),
+    );
+  }
+}
+
+// Product Details Screen
+class ProductDetailsScreen extends StatelessWidget {
+  final String name;
+  final String thc;
+  final String cbd;
+  final String location;
+
+  ProductDetailsScreen({this.name, this.thc, this.cbd, this.location});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(name)),
+      body: Column(
+        children: [
+          Text('THC: $thc'),
+          Text('CBD: $cbd'),
+          Text('Found At: $location'),
+        ],
+      ),
+    );
+  }
+}
+
+// Ninth Slide: Create Account Screen
+class CreateAccountScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Create Account')),
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            TextField(decoration: InputDecoration(labelText: 'Name')),
+            TextField(decoration: InputDecoration(labelText: 'Email')),
+            TextField(
+              decoration: InputDecoration(labelText: 'Password'),
+              obscureText: true,
+            ),
+            // Add Profile Picture and Birthday fields
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Bottom Navigation
+class BottomNavigation extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return BottomNavigationBar(
+      items: const <BottomNavigationBarItem>[
+        BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Main'),
+        BottomNavigationBarItem(icon: Icon(Icons.account_box), label: 'Account'),
+        BottomNavigationBarItem(icon: Icon(Icons.local_hospital), label: 'Green Out'),
+        BottomNavigationBarItem(icon: Icon(Icons.family_restroom), label: 'Family'),
+      ],
+      selectedItemColor: Colors.green,
+      unselectedItemColor: Colors.grey,
+    );
+  }
+}
+
+// Custom Widget for Number Input
+class NumberInputField extends StatelessWidget {
+  final String label;
+
+  NumberInputField({this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 80,
+      child: TextField(
+        keyboardType: TextInputType.number,
+        decoration: InputDecoration(labelText: label),
+      ),
+    );
+  }
+}
+
+// Custom Widget for Product Items in List
+class ProductItem extends StatelessWidget {
+  final String name;
+  final String distance;
+  final String price;
+  final String quantity;
+
+  ProductItem({this.name, this.distance, this.price, this.quantity});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: ListTile(
+        title: Text(name),
+        subtitle: Text('$quantity - $distance away'),
+        trailing: Text(price),
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ProductDetailsScreen(
+              name: name,
+              thc: "88-94%",
+              cbd: "1%",
+              location: "Puff Haven 569 Yonge Street",
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
